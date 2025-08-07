@@ -1,0 +1,60 @@
+@startuml ERD
+entity Users {
+    *id UUID <<PK>>
+    *username VARCHAR(255)
+    *password VARCHAR(255)
+    *role enum("admin", "user")
+    ---
+    fullname VARCHAR(255)
+    address TEXT
+    identity_number VARCHAR(20)
+    phone_number VARCHAR(16)
+    identity_image_url TEXT
+    deleted_at TIMESTAMP
+}
+
+entity Rental_Blocks {
+    *id UUID <<PK>>
+    *name VARCHAR(255)
+    *price INTEGER
+    ---
+    entry_date TIMESTAMP
+    user_id UUID <<FK>>
+    deleted_at TIMESTAMP
+}
+
+entity Invoices {
+    *id UUID <<PK>>
+    *user_id UUID <<FK>>
+    *user_fullname VARCHAR(255)
+    *address TEXT
+    *identity_number VARCHAR(20)
+    *phone_number VARCHAR(16)
+    *rental_block_id UUID <<FK>>
+    *rental_block_name VARCHAR(255)
+    *entry_date TIMESTAMP
+    *price INTEGER
+    *deposit INTEGER
+    *status enum("paid", "pending", "debt", "rejected")
+    *billing_month TIMESTAMP
+    *notes TEXT
+    ---
+    deleted_at TIMESTAMP
+}
+
+entity Receipts {
+    *id UUID <<PK>>
+    *invoice_id UUID <<FK>>
+    *url TEXT
+    *payment_date TIMESTAMP
+    *amount INTEGER
+}
+
+Users ||--o| Rental_Blocks
+Users ||--o{
+    Invoices
+    Rental_Blocks ||--o{
+        Invoices
+        Invoices ||--|{
+            Receipts
+            @enduml
